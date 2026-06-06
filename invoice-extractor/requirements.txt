@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+sqlalchemy
+psycopg2-binary
+pdfplumber
+pdf2image
+easyocr
+groq
+python-dotenv
+pydantic
