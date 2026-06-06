@@ -15,10 +15,11 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/extract-llm")
 async def extract_llm(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.content_type in ["application/pdf", "image/png", "image/jpeg", "image/jpg"]:
+    file_extension = file.filename.split('.')[-1].lower()
+    
+    if file_extension not in ["pdf", "png", "jpeg", "jpg"]:
         raise HTTPException(status_code=400, detail="Unsupported file format")
 
-    file_extension = file.filename.split('.')[-1]
     temp_file_name = f"{uuid.uuid4()}.{file_extension}"
     temp_file_path = os.path.join(UPLOAD_DIR, temp_file_name)
 
@@ -28,7 +29,7 @@ async def extract_llm(file: UploadFile = File(...), db: Session = Depends(get_db
             shutil.copyfileobj(file.file, buffer)
 
         # Step 3: Extract text
-        raw_text = extract_text_from_file(temp_file_path, file.content_type)
+        raw_text = extract_text_from_file(temp_file_path, file_extension)
 
         if not raw_text:
             raise HTTPException(status_code=400, detail="Could not extract text from document")
